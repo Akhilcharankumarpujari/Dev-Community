@@ -28,6 +28,8 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me'),
+  forgotPassword: (data) => api.post('/auth/forgotpassword', data),
+  resetPassword: (token, data) => api.put(`/auth/resetpassword/${token}`, data),
 };
 
 // Users endpoints

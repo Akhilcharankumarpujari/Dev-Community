@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import HomeFeed from './pages/HomeFeed';
 import Trending from './pages/Trending';
 import LoginRegister from './pages/LoginRegister';
+import ResetPassword from './pages/ResetPassword';
 import UserProfile from './pages/UserProfile';
 import ArticleDetails from './pages/ArticleDetails';
 import CreateEditArticle from './pages/CreateEditArticle';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/" element={<HomeFeed />} />
             <Route path="/trending" element={<Trending />} />
             <Route path="/enter" element={<LoginRegister />} />
+            <Route path="/resetpassword/:token" element={<ResetPassword />} />
             <Route path="/u/:username" element={<UserProfile />} />
             <Route path="/posts/:slug" element={<ArticleDetails />} />
             <Route path="/search" element={<SearchResults />} />

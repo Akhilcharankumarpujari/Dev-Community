@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { authAPI } from '../services/api';
 
 const LoginRegister = () => {
   const { login, register, user } = useAuth();
@@ -10,6 +11,7 @@ const LoginRegister = () => {
 
   const isSignUpDefault = searchParams.get('signup') === 'true';
   const [isSignUp, setIsSignUp] = useState(isSignUpDefault);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Form fields
   const [name, setName] = useState('');
@@ -39,6 +41,13 @@ const LoginRegister = () => {
     setLoading(true);
 
     try {
+      if (isForgotPassword) {
+        if (!email) throw new Error('Please enter your email');
+        await authAPI.forgotPassword({ email });
+        setSuccess('Password reset email sent! Please check your inbox.');
+        return; // Don't redirect
+      }
+
       if (isSignUp) {
         // Validation check
         if (!name || !username || !email || !password) {
@@ -58,7 +67,7 @@ const LoginRegister = () => {
         navigate('/');
       }, 1000);
     } catch (err) {
-      setError(typeof err === 'string' ? err : 'Authentication failed. Please verify your credentials.');
+      setError(err?.response?.data?.error || (typeof err === 'string' ? err : 'Authentication failed.'));
     } finally {
       setLoading(false);
     }
@@ -72,10 +81,10 @@ const LoginRegister = () => {
             DEV
           </Link>
           <h2 className="text-xl font-bold mt-4 text-slate-800 dark:text-white">
-            {isSignUp ? 'Create your account' : 'Welcome back!'}
+            {isForgotPassword ? 'Reset Password' : isSignUp ? 'Create your account' : 'Welcome back!'}
           </h2>
           <p className="text-sm text-gray-550 dark:text-gray-400 mt-1">
-            {isSignUp ? 'Join the DEV Community of developers' : 'Enter your credentials to manage your posts'}
+            {isForgotPassword ? 'Enter your email to receive a reset link' : isSignUp ? 'Join the DEV Community of developers' : 'Enter your credentials to manage your posts'}
           </p>
         </div>
 
@@ -134,40 +143,75 @@ const LoginRegister = () => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-gray-300">Password</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3.5 py-2.5 border border-dev-border dark:border-dev-border-dark rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-dev-brand/50 focus:border-dev-brand"
-              required
-            />
-          </div>
+          {!isForgotPassword && (
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-gray-300">Password</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3.5 py-2.5 border border-dev-border dark:border-dev-border-dark rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-dev-brand/50 focus:border-dev-brand"
+                required
+              />
+            </div>
+          )}
+
+          {!isSignUp && !isForgotPassword && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  setSuccess('');
+                  setIsForgotPassword(true);
+                }}
+                className="text-sm text-dev-brand dark:text-blue-400 font-semibold hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full py-3 bg-dev-brand hover:bg-dev-brand-hover disabled:opacity-50 text-white font-bold rounded-lg shadow transition-colors"
           >
-            {loading ? 'Authenticating...' : isSignUp ? 'Sign Up' : 'Log In'}
+            {loading ? 'Processing...' : isForgotPassword ? 'Send Reset Link' : isSignUp ? 'Sign Up' : 'Log In'}
           </button>
         </form>
 
         <div className="mt-6 pt-6 border-t border-dev-border dark:border-slate-800 text-center text-sm">
-          <p className="text-gray-500 dark:text-gray-400">
-            {isSignUp ? 'Already have an account?' : 'New to DEV Community?'}
-            <button
-              onClick={() => {
-                setError('');
-                setIsSignUp(!isSignUp);
-              }}
-              className="text-dev-brand dark:text-blue-400 font-semibold hover:underline ml-1"
-            >
-              {isSignUp ? 'Log in' : 'Create account'}
-            </button>
-          </p>
+          {isForgotPassword ? (
+            <p className="text-gray-500 dark:text-gray-400">
+              Remember your password?
+              <button
+                onClick={() => {
+                  setError('');
+                  setSuccess('');
+                  setIsForgotPassword(false);
+                }}
+                className="text-dev-brand dark:text-blue-400 font-semibold hover:underline ml-1"
+              >
+                Log in
+              </button>
+            </p>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              {isSignUp ? 'Already have an account?' : 'New to DEV Community?'}
+              <button
+                onClick={() => {
+                  setError('');
+                  setSuccess('');
+                  setIsSignUp(!isSignUp);
+                }}
+                className="text-dev-brand dark:text-blue-400 font-semibold hover:underline ml-1"
+              >
+                {isSignUp ? 'Log in' : 'Create account'}
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </div>
