@@ -1,6 +1,6 @@
-# DevBlog: Developer Blogging Platform (Dev.to Clone)
+# DevBlog: Developer Blogging Platform
 
-DevBlog is a full-stack, feature-rich developer blogging platform inspired by [Dev.to](https://dev.to). It is built using the **MERN Stack** (MongoDB, Express, React, Node.js) and features a modern, clean developer-focused UI, JWT authentication, nested comments, live markdown previews, real-time activity notifications, bookmark lists, and built-in AI post summary generation and toxic comment moderation checks.
+DevBlog is a full-stack, feature-rich developer blogging platform. It is built using the **MERN Stack** (MongoDB, Express, React, Node.js) and features a modern, clean developer-focused UI, JWT authentication, nested comments, live markdown previews, real-time activity notifications, bookmark lists, and built-in AI post summary generation and toxic comment moderation checks.
 
 ---
 
